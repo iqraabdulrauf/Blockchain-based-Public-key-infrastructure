@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blockchain Based PKI</title>
+
+    <link rel="stylesheet" type="text/css" href="main.css">
+
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+
+</head>
+<body>
+	<div>
+		<h1 id="hed">Blockchain Based PKI</h1>
+        <h2 id="res"></h2>
+	</div>
+
+    <div id="container">
+        <img id="loader" src="https://loading.io/spinners/double-ring/lg.double-ring-spinner.gif">
+		<br />
+        <label for="Certificate Number" class="col-lg-2 control-label"> Certificate Number</label>
+        <input id="CertNo" type="number">
+		<br />
+        <label for="Certificate Hash" class="col-lg-2 control-label"> Certificate Hash </label>
+        <input id="Certhash" type="text">
+		<br />
+        <label for="Issued T" class="col-lg-2 control-label"> To </label>
+		<input id="Issuedto" type="text">
+		<br />
+		<label for="Issued By" class="col-lg-2 control-label"> By </label>
+		<input id="Issuedby" type="text">
+		<br />
+
+		<button id="buttonS">Store</button> <button id="buttonR">Revoke</button>
+	</div>
+
+	<div id="next" >
+		<button id="buttonN">Next</button>
+	</div>
+
+	<div id="func">
+			<input type="file" id="file"/>
+			<input type="button" onclick="calculate();" value="Calculate" class="btn primary" id="buttonF" />
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/spark-md5/2.0.2/spark-md5.min.js"></script>
+
+    <script>
+
+	function calculateMD5Hash(file, bufferSize) {
+  		var def = Q.defer();
+  		var fileReader = new FileReader();
+  		var fileSlicer = File.prototype.slice || File.prototype.mozSlice || File.prototype.webkitSlice;
+  		var hashAlgorithm = new SparkMD5();
+  		var totalParts = Math.ceil(file.size / bufferSize);
+  		var currentPart = 0;
+
+  	fileReader.onload = function(e) {
+    currentPart += 1;
+
+    def.notify({
+      currentPart: currentPart,
+      totalParts: totalParts
+    });
+
+    var buffer = e.target.result;
+    hashAlgorithm.appendBinary(buffer);
+
+    if (currentPart < totalParts) {
+      processNextPart();
+      return;
+    }
+
+    def.resolve({
+      hashResult: hashAlgorithm.end()
+    });
+  	};
+
+  	fileReader.onerror = function(e) {
+    def.reject(e);
+  	};
+
+  	function processNextPart() {
+    var start = currentPart * bufferSize;
+    var end = Math.min(start + bufferSize, file.size);
+    fileReader.readAsBinaryString(fileSlicer.call(file, start, end));
+  	}	
+
+  	processNextPart();
+  	return def.promise;
+	}
+
+	function calculate() {
+
+  		var input = document.getElementById('file');
+  		if (!input.files.length) {
+    	return;
+  		}
+
+  	var file = input.files[0];
+  	var bufferSize = Math.pow(1024, 2) * 10; // 10MB
+
+  	calculateMD5Hash(file, bufferSize).then(
+    function(result) {
+      console.log(result);
+	  document.getElementById('Certhash').value = JSON.stringify(result["hashResult"]);
+	  	$("#container").show();
+		$("#func").hide();
+    });
+	}
+
+
+      if(typeof web3!=='undefined')
+      {
+        web3=new Web3(web3.currentProvider);
+      }
+      else
+          {
+          web3=new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+          }
+          
+          web3.eth.defaultAccount=web3.eth.accounts[0];
+
+          var CoursetroContract=web3.eth.contract([
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "signatureID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "signer",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"name": "CertNo",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "Certhash",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "Issuedto",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "Issuedby",
+				"type": "bytes32"
+			}
+		],
+		"name": "AttributeSigned",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "RevNo",
+				"type": "uint256"
+			},
+			{
+				"name": "RevCertHash",
+				"type": "string"
+			},
+			{
+				"name": "to",
+				"type": "bytes32"
+			},
+			{
+				"name": "By",
+				"type": "bytes32"
+			}
+		],
+		"name": "revokeSignature",
+		"outputs": [
+			{
+				"name": "revocationID",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "CertNo",
+				"type": "uint256"
+			},
+			{
+				"name": "Certhash",
+				"type": "string"
+			},
+			{
+				"name": "Issuedto",
+				"type": "bytes32"
+			},
+			{
+				"name": "IssuedBy",
+				"type": "bytes32"
+			}
+		],
+		"name": "signAttribute",
+		"outputs": [
+			{
+				"name": "signatureID",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"name": "revocationID",
+				"type": "uint256"
+			},
+			{
+				"indexed": true,
+				"name": "RevNo",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "RevCertHash",
+				"type": "string"
+			},
+			{
+				"indexed": false,
+				"name": "to",
+				"type": "bytes32"
+			},
+			{
+				"indexed": false,
+				"name": "By",
+				"type": "bytes32"
+			}
+		],
+		"name": "SignatureRevoked",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"name": "SignedCertAccnt",
+				"type": "bytes32[]"
+			}
+		],
+		"name": "Hashes",
+		"type": "event"
+	},
+	{
+		"constant": false,
+		"inputs": [],
+		"name": "SignedCertificates",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": true,
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "revocations",
+		"outputs": [
+			{
+				"name": "signatureID",
+				"type": "uint256"
+			},
+			{
+				"name": "RevNo",
+				"type": "uint256"
+			},
+			{
+				"name": "RevCertHash",
+				"type": "string"
+			},
+			{
+				"name": "to",
+				"type": "bytes32"
+			},
+			{
+				"name": "By",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "RevokedCertificates",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "signatures",
+		"outputs": [
+			{
+				"name": "signer",
+				"type": "address"
+			},
+			{
+				"name": "CertNo",
+				"type": "uint256"
+			},
+			{
+				"name": "Certhash",
+				"type": "string"
+			},
+			{
+				"name": "Issuedto",
+				"type": "bytes32"
+			},
+			{
+				"name": "IssuedBy",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	}
+]);
+
+    var Coursetro = CoursetroContract.at('0x848d45cd246cf1ace3e91250085b49afe3e31797');
+	
+     console.log(Coursetro);
+
+	  var EventS = Coursetro.AttributeSigned();
+	 EventS.watch(function(error, result){
+            if (!error)
+                {
+                    $("#loader").hide();
+					$("#res").show();
+                    $("#res").html('Certificate No : ' + result.args.CertNo + '<br/> Hash : ' + result.args.Certhash + '<br/> To : ' + web3.toAscii(result.args.Issuedto) + '<br/> By : ' + web3.toAscii(result.args.Issuedby));
+					$("#container").hide();
+					$("#next").show();
+                } else {
+                   $("#loader").hide();
+                    console.log(error);
+                }
+        });
+		$("#buttonS").click(function()
+		{
+			Coursetro.signAttribute($("#CertNo").val(),$("#Certhash").val(), $("#Issuedto").val(), $("#Issuedby").val(),
+			function (err, result) {
+        $('#buttonS').html($('input').val());
+    }
+			);
+			$("#loader").show();
+		}); 
+ 
+
+	var EventR = Coursetro.SignatureRevoked();
+	 EventR.watch(function(error, result){
+            if (!error)
+                {
+                    $("#loader").hide();
+					$("#res").show();
+                    $("#res").html('Certificate No : ' + result.args.RevNo + '<br/> Hash : ' + result.args.RevCertHash + '<br/> To : ' + web3.toAscii(result.args.to) + '<br/> By : ' + web3.toAscii(result.args.By));
+					$("#container").hide();
+					$("#next").show();
+                } else {
+                   $("#loader").hide();
+                    console.log(error);
+                }
+        });
+
+		$("#buttonR").click(function()
+		{
+			Coursetro.revokeSignature($("#CertNo").val(),$("#Certhash").val(), $("#Issuedto").val(), $("#Issuedby").val(),
+			function (err, result) {
+        $('#buttonR').html($('input').val());
+    }
+			);
+			$("#loader").show();
+		});
+
+		$("#buttonN").click(function()
+		{
+			location.reload();
+			/* $("#func").show();
+			$("#next").hide();
+			$("#res").hide(); */
+		});
+
+
+
+    </script>
+
+</body>
+</html>

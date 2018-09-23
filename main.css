@@ -1,0 +1,124 @@
+body {
+    
+
+    background-color:#F0F0F0;
+    background-image:url("images/digital-blockchain.jpg"); 
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 2em;
+   font-family: 'Trebuchet MS','Source Sans Pro', 'Arial';
+    font-size:18px;
+}
+
+#container,#next {
+    width: 50%;
+    margin: 0 auto;
+    display: none;
+}
+
+label {
+    display: inline-block;
+    width: 114px;
+    text-align: right;
+    margin-bottom:10px;s
+    padding-top: 1px;
+    padding-bottom: 1px;
+}
+
+input {
+    padding:8px;
+    width: 50%;
+    margin-bottom: 1em;
+}
+
+#buttonS,#buttonR,#buttonF {   
+    margin: 2em 0;
+    padding: 1em 4em;
+    display:inline-block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    cursor: pointer;
+    margin: 4px;
+    padding: 10px 74px;
+    border: 1px solid rgba(96,186,219,0.66);
+    -webkit-border-radius: 3px;
+    border-radius: 16px;
+    font: normal 16px/normal "Trebuchet MS", Helvetica, sans-serif;
+    color: rgb(7, 7, 7);
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    background: rgba(36,143,214,0.66);
+    -webkit-box-shadow: 2px 2px 2px 0 rgba(26,104,221,0.83) ;
+    box-shadow: 2px 2px 2px 0 rgba(26,104,221,0.83) ;
+    text-shadow: -1px -1px 0 rgba(17, 18, 19, 0.66) ;
+    -webkit-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -moz-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -o-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -webkit-transform: rotateX(8.021409131831525deg) rotateY(1.7188733853924696deg)   ;
+    transform: rotateX(8.021409131831525deg) rotateY(1.7188733853924696deg)   ;
+    margin: 0 auto;
+    width: 100px;
+}
+
+#buttonF {
+    display: block;
+    margin: 0;
+}
+
+ #buttonN {   
+    margin: 2em 0;
+    padding: 1em 4em;
+    display:block;
+    -webkit-box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
+    cursor: pointer;
+    margin: 4px;
+    padding: 10px 74px;
+    border: 1px solid rgba(96,186,219,0.66);
+    -webkit-border-radius: 3px;
+    border-radius: 16px;
+    font: normal 16px/normal "Trebuchet MS", Helvetica, sans-serif;
+    color: rgb(7, 7, 7);
+    -o-text-overflow: clip;
+    text-overflow: clip;
+    background: rgba(36,143,214,0.66);
+    -webkit-box-shadow: 2px 2px 2px 0 rgba(26,104,221,0.83) ;
+    box-shadow: 2px 2px 2px 0 rgba(26,104,221,0.83) ;
+    text-shadow: -1px -1px 0 rgba(17, 18, 19, 0.66) ;
+    -webkit-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -moz-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -o-transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    transition: all 300ms cubic-bezier(0.42, 0, 0.58, 1);
+    -webkit-transform: rotateX(8.021409131831525deg) rotateY(1.7188733853924696deg)   ;
+    transform: rotateX(8.021409131831525deg) rotateY(1.7188733853924696deg)   ;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+} 
+
+#res {
+    display: block;
+    padding:1em;
+    background-color:#fff;
+    margin-left: 10em;
+    margin-right: 10em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    display: none;
+}
+
+#hed {
+    display: block;
+    padding:1em;
+    text-align: center;
+}
+
+#loader {
+    width: 100px;
+    display:none;
+    text-align: center;
+}
